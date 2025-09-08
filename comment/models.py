@@ -1,16 +1,23 @@
 from django.db import models
+from blogs.models import Blog
+from config import settings
 
-from blogs.models import Blogs
-from users.models import Users
 
-
-# Create your models here.
-class Comments(models.Model):
-    blog = models.ForeignKey(Blogs, on_delete=models.CASCADE, related_name="comment", null=False)
-    user = models.ForeignKey(Users, on_delete=models.CASCADE, related_name="comment", null=False)
-    message = models.TextField(null=False)
-    date_crated = models.DateField(auto_now_add=True)
-    time_created = models.TimeField(auto_now_add=True)
+class Comment(models.Model):
+    blog = models.ForeignKey(
+        Blog,
+        on_delete=models.CASCADE,
+        related_name="comments"
+    )
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        related_name="comments",
+        null=True,
+        blank=True
+    )
+    message = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return self.message
+        return f"Comment by {self.user} on {self.blog}"
